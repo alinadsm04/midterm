@@ -5,10 +5,13 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.lifecycleScope
 import com.example.aviatickets.R
 import com.example.aviatickets.adapter.OfferListAdapter
 import com.example.aviatickets.databinding.FragmentOfferListBinding
+import com.example.aviatickets.model.network.ApiClient
 import com.example.aviatickets.model.service.FakeService
+import kotlinx.coroutines.launch
 
 
 class OfferListFragment : Fragment() {
@@ -37,7 +40,10 @@ class OfferListFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         setupUI()
-        adapter.setItems(FakeService.offerList)
+        lifecycleScope.launch {
+            adapter.setItems(FakeService.offerList + ApiClient.performRequest())
+        }
+
     }
 
     private fun setupUI() {
@@ -47,15 +53,11 @@ class OfferListFragment : Fragment() {
             sortRadioGroup.setOnCheckedChangeListener { _, checkedId ->
                 when (checkedId) {
                     R.id.sort_by_price -> {
-                        /**
-                         * implement sorting by price
-                         */
+                        adapter.sortByPrice()
                     }
 
                     R.id.sort_by_duration -> {
-                        /**
-                         * implement sorting by duration
-                         */
+                        adapter.sortByDuration()
                     }
                 }
             }
